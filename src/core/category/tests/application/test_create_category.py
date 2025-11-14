@@ -3,17 +3,17 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from src.core.category.application.category_repository import CategoryRepository
 from src.core.category.application.create_category import (
     CreateCategory,
     CreateCategoryRequest,
     InvalidCategoryData,
 )
-from src.core.category.infra.in_memory_category import InMemoryCategoryRepository
 
 
 class TestCreateCategory:
     def test_create_category_with_valid_data(self):
-        mock_repository = MagicMock(InMemoryCategoryRepository)
+        mock_repository = MagicMock(CategoryRepository)
         use_case = CreateCategory(repository=mock_repository)
         request = CreateCategoryRequest(
           name="Filme",
@@ -28,7 +28,7 @@ class TestCreateCategory:
         assert mock_repository.save.called
 
     def test_create_category_with_invalid_data(self):
-        mock_repository = MagicMock(InMemoryCategoryRepository)
+        mock_repository = MagicMock(CategoryRepository)
         use_case = CreateCategory(repository=mock_repository)
         request = CreateCategoryRequest(name="")
 
