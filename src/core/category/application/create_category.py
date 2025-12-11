@@ -5,7 +5,6 @@ from src.core.category.application.exceptions import InvalidCategoryData
 from src.core.category.domain.category import Category
 from src.core.category.infra.in_memory_category import InMemoryCategoryRepository
 
-
 @dataclass
 class CreateCategoryRequest:
     name: str
@@ -31,4 +30,4 @@ class CreateCategory:
         raise InvalidCategoryData(err)
 
     self.repository.save(category)
-    return category.id  # pyright: ignore[reportReturnType]
+    return CreateCategoryResponse(id=category.id)  # pyright: ignore[reportReturnType]
