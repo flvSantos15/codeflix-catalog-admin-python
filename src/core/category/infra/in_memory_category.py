@@ -26,3 +26,6 @@ class InMemoryCategoryRepository(CategoryRepository):
         if old_category:
             self.categories.remove(old_category)
             self.categories.append(category)
+
+    def list(self) -> list[Category]:
+        return [category for category in self.categories]
