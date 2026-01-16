@@ -1,9 +1,9 @@
-from abc import abstractmethod
+from dataclasses import dataclass
 from uuid import UUID
 from core.category.application.category_repository import CategoryRepository
 
 
-@abstractmethod
+@dataclass
 class UpdateCategoryRequest:
     id: UUID
     name: str | None = None
@@ -16,7 +16,7 @@ class UpdateCategory:
         self.repository = repository
 
     def execute(self, request: UpdateCategoryRequest) -> None:
-        category = self.respository.get_by_id(request)
+        category = self.repository.get_by_id(request)
 
         current_name = category.name
         current_description = category.description
