@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from src.core.category.application.category_repository import CategoryRepository
+from core.category.domain.category_repository import CategoryRepository
 from src.core.category.application.use_cases.create_category import (
     CreateCategory,
     CreateCategoryRequest,
@@ -17,9 +17,9 @@ class TestCreateCategory:
         mock_repository = MagicMock(CategoryRepository)
         use_case = CreateCategory(repository=mock_repository)
         request = CreateCategoryRequest(
-          name="Filme",
-          description="Categoria para filme",
-          is_active=True,
+            name="Filme",
+            description="Categoria para filme",
+            is_active=True,
         )
 
         response = use_case.execute(request)

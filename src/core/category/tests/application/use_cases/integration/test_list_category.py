@@ -1,4 +1,4 @@
-from core.category.application.category_repository import CategoryRepository
+from core.category.domain.category_repository import CategoryRepository
 from core.category.application.use_cases.list_category import CategoryOutput, ListCategory, ListCategoryRequest, ListCategoryResponse
 from core.category.domain.category import Category
 from core.category.infra.in_memory_category import InMemoryCategoryRepository
