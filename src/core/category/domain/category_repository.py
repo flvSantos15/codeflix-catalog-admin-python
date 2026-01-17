@@ -18,9 +18,9 @@ class CategoryRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def update(self, id: UUID) -> None:
+    def list(self) -> list[Category]:
         raise NotImplementedError
 
     @abstractmethod
-    def list(self) -> list[Category]:
+    def update(self, category: Category) -> None:
         raise NotImplementedError

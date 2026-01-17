@@ -1,56 +1,64 @@
-from core.category.domain.category_repository import CategoryRepository
-from core.category.application.use_cases.list_category import CategoryOutput, ListCategory, ListCategoryRequest, ListCategoryResponse
-from core.category.domain.category import Category
+from unittest.mock import create_autospec
+
+import pytest
 from core.category.infra.in_memory_category import InMemoryCategoryRepository
+from src.core.category.domain.category_repository import CategoryRepository
+from src.core.category.application.use_cases.list_category import (
+    CategoryOutput,
+    ListCategory,
+    ListCategoryRequest,
+    ListCategoryResponse,
+)
+from src.core.category.domain.category import Category
 
 
 class TestListCategory:
-    def test_return_empty_list(self):
-        category = Category(
+    @pytest.fixture
+    def category_movie(self) -> Category:
+        return Category(
             name="Filme",
-            description="Categoria para filmes"
+            description="Categoria de filmes",
         )
 
-        repository = InMemoryCategoryRepository(categories=[])
+    @pytest.fixture
+    def category_series(self) -> Category:
+        return Category(
+            name="Séries",
+            description="Categoria de séries",
+        )
 
-        use_case = ListCategory(repository=repository)
-        request = ListCategoryRequest()
-        response = use_case.execute(request)
+    def test_when_no_categories_then_return_empty_list(self) -> None:
+        empty_repository = InMemoryCategoryRepository()
+        use_case = ListCategory(repository=empty_repository)
+        response = use_case.execute(request=ListCategoryRequest())
 
         assert response == ListCategoryResponse(data=[])
 
-    def test_return_existing_categorie(self):
-        category_filme = Category(
-            name="Filme",
-            description="Categoria para filme"
-        )
-        category_serie = Category(
-            name="Série",
-            description="Categoria para série"
-        )
-
-        repository = InMemoryCategoryRepository(categories=[
-            category_filme,
-            category_serie
-        ])
-        repository.save(category=category_filme)
-        repository.save(category=category_serie)
+    def test_when_categories_exist_then_return_mapped_list(
+        self,
+        category_movie: Category,
+        category_series: Category,
+    ) -> None:
+        repository = InMemoryCategoryRepository()
+        repository.save(category=category_movie)
+        repository.save(category=category_series)
 
         use_case = ListCategory(repository=repository)
-        request = ListCategoryRequest()
-        response = use_case.execute(request)
+        response = use_case.execute(request=ListCategoryRequest())
 
-        assert response == ListCategoryResponse(data=[
-            CategoryOutput(
-                id=category_filme.id,
-                name=category_filme.name,
-                description=category_filme.description,
-                is_active=category_filme.is_active
-            ),
-            CategoryOutput(
-                id=category_serie.id,
-                name=category_serie.name,
-                description=category_serie.description,
-                is_active=category_serie.is_active
-            ),
-        ])
+        assert response == ListCategoryResponse(
+            data=[
+                CategoryOutput(
+                    id=category_movie.id,
+                    name=category_movie.name,
+                    description=category_movie.description,
+                    is_active=category_movie.is_active,
+                ),
+                CategoryOutput(
+                    id=category_series.id,
+                    name=category_series.name,
+                    description=category_series.description,
+                    is_active=category_series.is_active,
+                ),
+            ]
+        )
