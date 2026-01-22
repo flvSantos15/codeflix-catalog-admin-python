@@ -1,11 +1,6 @@
 from dataclasses import dataclass
 from uuid import UUID
-from core.category.domain.category_repository import CategoryRepository
-
-
-@dataclass
-class ListCategoryRequest:
-    pass
+from src.core.category.domain.category_repository import CategoryRepository
 
 
 @dataclass
@@ -17,16 +12,21 @@ class CategoryOutput:
 
 
 @dataclass
+class ListCategoryRequest:
+    pass
+
+
+@dataclass
 class ListCategoryResponse:
     data: list[CategoryOutput]
 
 
 class ListCategory:
-    def __init__(self, repository: CategoryRepository):
+    def __init__(self, repository: CategoryRepository) -> None:
         self.repository = repository
 
     def execute(self, request: ListCategoryRequest) -> ListCategoryResponse:
-        categories = self.repository.list(self)
+        categories = self.repository.list()
 
         return ListCategoryResponse(
             data=[
@@ -34,7 +34,8 @@ class ListCategory:
                     id=category.id,
                     name=category.name,
                     description=category.description,
-                    is_active=category.is_active
-                ) for category in categories
+                    is_active=category.is_active,
+                )
+                for category in categories
             ]
         )
