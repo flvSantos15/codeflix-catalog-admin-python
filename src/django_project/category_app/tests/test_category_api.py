@@ -42,20 +42,23 @@ class TestCategoryAPI:
         url = '/api/categories/'
         response = APIClient().get(url)
 
-        expected_data = [
-            {
-                "id": str(category_movie.id),
-                "name": "Movie",
-                "description": "Movie description",
-                "is_active": True
-            },
-            {
-                "id": str(category_documentary.id),
-                "name": "Documentary",
-                "description": "Documentary description",
-                "is_active": True
-            }
-        ]
+        expected_data = {
+            "data": [
+                {
+                    "id": str(category_movie.id),
+                    "name": "Movie",
+                    "description": "Movie description",
+                    "is_active": True
+                },
+                {
+
+                    "id": str(category_documentary.id),
+                    "name": "Documentary",
+                    "description": "Documentary description",
+                    "is_active": True
+                }
+            ]
+        }
 
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 2
@@ -83,10 +86,12 @@ class TestRetrieveAPI:
         response = APIClient().get(url)
 
         expected_data = {
-            "id": str(category_documentary.id),
-            "name": category_documentary.name,
-            "description": category_documentary.description,
-            "is_active": category_documentary.is_active
+            "data": {
+                "id": str(category_documentary.id),
+                "name": category_documentary.name,
+                "description": category_documentary.description,
+                "is_active": category_documentary.is_active
+            }
         }
 
         assert response.status_code == status.HTTP_200_OK
