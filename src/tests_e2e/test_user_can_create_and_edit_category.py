@@ -3,11 +3,14 @@ import pytest
 from rest_framework.test import APIClient
 
 
+@pytest.fixture
+def api_client() -> APIClient:
+    return APIClient()
+
+
 @pytest.mark.django_db
 class TestCreateAndEditCategory:
-    def test_user_can_create_and_edit_category(self) -> None:
-        api_client = APIClient()
-
+    def test_user_can_create_and_edit_category(self, api_client: APIClient) -> None:
         # verifica que lista esta vazia
         list_response = api_client.get("/api/categories/")
         assert list_response.data == {"data": []}

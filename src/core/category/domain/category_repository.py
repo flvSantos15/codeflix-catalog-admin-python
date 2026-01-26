@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 from uuid import UUID
 
 from src.core.category.domain.category import Category
@@ -18,7 +19,7 @@ class CategoryRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def list(self) -> list[Category]:
+    def list(self) -> List[Category]:
         raise NotImplementedError
 
     @abstractmethod
