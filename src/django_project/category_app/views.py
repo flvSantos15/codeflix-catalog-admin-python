@@ -5,12 +5,13 @@ from rest_framework.request import Request
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 
 from core.category.application.use_cases.create_category import CreateCategory, CreateCategoryRequest
+from core.category.application.use_cases.delete_category import DeleteCategory, DeleteCategoryRequest
 from core.category.application.use_cases.exceptions import CategoryNotFound
 from core.category.application.use_cases.get_category import GetCategory, GetCategoryRequest
 from core.category.application.use_cases.list_category import ListCategory, ListCategoryRequest
 from core.category.application.use_cases.update_category import UpdateCategory, UpdateCategoryRequest
 from django_project.category_app.repository import DjangoORMCategoryRepository
-from django_project.category_app.serializers import CategoryResponseSerializer, CreateCategoryRequestSerializer, CreateCategoryResponseSerializer, ListCategoryResponseSerializer, RetrieveCategoryRequestSerializer, RetrieveCategoryResponseSerializer, UpdateCategoryRequestSerializer
+from django_project.category_app.serializers import CategoryResponseSerializer, CreateCategoryRequestSerializer, CreateCategoryResponseSerializer, DeleteCategoryRequestSerializer, ListCategoryResponseSerializer, RetrieveCategoryRequestSerializer, RetrieveCategoryResponseSerializer, UpdateCategoryRequestSerializer
 
 
 class CategoryViewSet(viewsets.ViewSet):
@@ -74,3 +75,18 @@ class CategoryViewSet(viewsets.ViewSet):
         use_case.execute(request=input)
 
         return Response(HTTP_204_NO_CONTENT)
+
+    def destroy(self, request: Request, pk=None) -> Response:
+        serializer = DeleteCategoryRequestSerializer(data={"id": pk})
+        serializer.is_valid(raise_exception=True)
+
+        use_case = DeleteCategory(repository=DjangoORMCategoryRepository())
+
+        try:
+            use_case.execute(
+                request=DeleteCategoryRequest(**serializer.validated_data)
+            )
+        except CategoryNotFound:
+            return Response(status=HTTP_404_NOT_FOUND)
+
+        return Response(status=HTTP_204_NO_CONTENT)
