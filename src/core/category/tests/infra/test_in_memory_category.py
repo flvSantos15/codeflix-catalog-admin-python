@@ -13,7 +13,21 @@ class TestSave:
 
 
 class TesteGetById:
-    ...
+    def test_can_get_category_by_id(self):
+        repository = InMemoryCategoryRepository()
+
+        category = Category(name='Movie', description='Movie category')
+        repository.save(category)
+        assert len(repository.categories) == 1
+        assert repository.categories[0] == category
+
+        category_id = category.id
+
+        response = repository.get_by_id(category_id)
+        assert response.id == category_id
+        assert response.name == 'Movie'
+        assert response.description == 'Movie category'
+        assert response.is_active == True
 
 
 class TestDelete:
