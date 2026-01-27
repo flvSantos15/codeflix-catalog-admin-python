@@ -16,7 +16,7 @@ class UpdateCategory:
         self.repository = repository
 
     def execute(self, request: UpdateCategoryRequest) -> None:
-        category = self.repository.get_by_id(request)
+        category = self.repository.get_by_id(request.id)
 
         current_name = category.name
         current_description = category.description

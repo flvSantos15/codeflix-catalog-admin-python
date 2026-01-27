@@ -5,13 +5,18 @@ from core.category.infra.in_memory_category import InMemoryCategoryRepository
 
 class TestUpdateCategory:
     def test_can_update_category_name_and_description(self):
+        repository = InMemoryCategoryRepository()
         category = Category(
             name="Filme",
             description="Categoria para filmes"
         )
 
-        repository = InMemoryCategoryRepository()
         repository.save(category)
+        category_id = category.id
+
+        created_category = repository.get_by_id(category_id)
+        assert created_category.id == category.id
+        assert created_category.name == category.name
 
         use_case = UpdateCategory(repository=repository)
         request = UpdateCategoryRequest(
