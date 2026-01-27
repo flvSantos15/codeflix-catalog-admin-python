@@ -1,4 +1,5 @@
 from uuid import UUID
+from typing import List
 from src.core.category.domain.category_repository import CategoryRepository
 from src.core.category.domain.category import Category
 from django_project.category_app.models import Category as CategoryORM
@@ -31,7 +32,7 @@ class DjangoORMCategoryRepository(CategoryRepository):
     def delete(self, id: UUID) -> None:
         self.model.objects.filter(id=id).delete()
 
-    def list(self) -> list[Category]:
+    def list(self) -> List[Category]:
         return [
             Category(
                 id=category.id,

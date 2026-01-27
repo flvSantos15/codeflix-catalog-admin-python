@@ -18,7 +18,7 @@ def category_movie():
 @pytest.fixture
 def category_documentary():
     return Category(
-        name="DOcumentary",
+        name="Documentary",
         description="Documentary category"
     )
 
@@ -47,14 +47,14 @@ class TestListAPI:
                 {
                     "id": str(category_movie.id),
                     "name": "Movie",
-                    "description": "Movie description",
+                    "description": "Movie category",
                     "is_active": True
                 },
                 {
 
                     "id": str(category_documentary.id),
                     "name": "Documentary",
-                    "description": "Documentary description",
+                    "description": "Documentary category",
                     "is_active": True
                 }
             ]
