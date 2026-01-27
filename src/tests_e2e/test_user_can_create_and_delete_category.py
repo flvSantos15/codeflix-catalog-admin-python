@@ -23,7 +23,7 @@ class TestCreateAndDeleteCategory:
         assert create_response.status_code == 201
         created_category_id = create_response.data["id"]
 
-        # Verifica que categoria criada aparece na listagem
+        # # Verifica que categoria criada aparece na listagem
         list_response = api_client.get("/api/categories/")
         assert list_response.data == {
             "data": [
@@ -36,12 +36,12 @@ class TestCreateAndDeleteCategory:
             ]
         }
 
-        # Deleta a categoria
+        # # Deleta a categoria
         delete_response = api_client.delete(
             f"/api/categories/{created_category_id}/"
         )
         assert delete_response.status_code == 204
 
-        # Verifica que a categoria deletada não aparece na listagem
-        list_response = api_client.get("api/categories")
+        # # Verifica que a categoria deletada não aparece na listagem
+        list_response = api_client.get("/api/categories/")
         assert list_response.data == {"data": []}
