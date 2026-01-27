@@ -193,12 +193,13 @@ class TestUpdateAPI:
         assert updated_category.is_active is True
 
     def test_when_category_does_not_exist_then_return_404(self):
-        url = f'/api/categories/{uuid.uuid4()}/'
+        category_id = uuid.uuid4()
+        url = f'/api/categories/{category_id}/'
         response = APIClient().put(
             url,
             data={
                 "name": "Documentary",
-                "description": "Documentary description",
+                "description": "Documentary category",
                 "is_active": True
             },
         )

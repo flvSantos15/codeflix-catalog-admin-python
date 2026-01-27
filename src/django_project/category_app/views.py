@@ -79,18 +79,17 @@ class CategoryViewSet(viewsets.ViewSet):
         except CategoryNotFound:
             return Response(status=HTTP_404_NOT_FOUND)
 
-        return Response(HTTP_204_NO_CONTENT)
+        return Response(status=HTTP_204_NO_CONTENT)
 
     def destroy(self, request: Request, pk=None) -> Response:
         serializer = DeleteCategoryRequestSerializer(data={"id": pk})
         serializer.is_valid(raise_exception=True)
 
+        input = DeleteCategoryRequest(**serializer.validated_data)
         use_case = DeleteCategory(repository=DjangoORMCategoryRepository())
 
         try:
-            use_case.execute(
-                request=DeleteCategoryRequest(**serializer.validated_data)
-            )
+            use_case.execute(request=input)
         except CategoryNotFound:
             return Response(status=HTTP_404_NOT_FOUND)
 
