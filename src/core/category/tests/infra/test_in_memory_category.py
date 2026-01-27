@@ -31,4 +31,15 @@ class TesteGetById:
 
 
 class TestDelete:
-    ...
+    def test_can_delete_category(self):
+        repository = InMemoryCategoryRepository()
+
+        category = Category(name='Movie', description='Movie category')
+        repository.save(category)
+        assert len(repository.categories) == 1
+        assert repository.categories[0] == category
+
+        category_id = category.id
+
+        repository.delete(category_id)
+        assert len(repository.categories) == 0
