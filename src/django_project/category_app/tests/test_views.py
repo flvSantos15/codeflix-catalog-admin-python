@@ -101,7 +101,6 @@ class TestRetrieveAPI:
         url = f'/api/categories/{uuid.uuid4()}/'
         response = APIClient().get(url)
 
-        print(response)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -216,7 +215,8 @@ class TestDeleteAPI:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_when_category_does_not_exist_then_return_404(self) -> None:
-        url = f'/api/categories/{uuid.uuid4()}/'
+        category_id = uuid.uuid4()
+        url = f'/api/categories/{category_id}/'
         response = APIClient().delete(url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
