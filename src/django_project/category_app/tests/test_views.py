@@ -208,6 +208,78 @@ class TestUpdateAPI:
 
 
 @pytest.mark.django_db
+class TestPartialUpdateAPI:
+    def test_when_payload_has_only_name_then_return_204(
+        self,
+        category_movie: Category,
+        category_repository: DjangoORMCategoryRepository
+    ) -> None:
+        category_repository.save(category_movie)
+
+        url = f"/api/categories/{category_movie.id}/"
+        response = APIClient().patch(
+            url,
+            data={
+                "name": "Documentary"
+            }
+        )
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+        updated_category = category_repository.get_by_id(category_movie.id)
+
+        assert updated_category.name == "Documentary"
+        assert updated_category.description == "Movie category"
+        assert updated_category.is_active is True
+
+    def test_when_payload_has_only_description_then_return_204(
+        self,
+        category_movie: Category,
+        category_repository: DjangoORMCategoryRepository
+    ) -> None:
+        category_repository.save(category_movie)
+
+        url = f"/api/categories/{category_movie.id}/"
+        response = APIClient().patch(
+            url,
+            data={
+                "description": "Documentary category"
+            }
+        )
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+        updated_category = category_repository.get_by_id(category_movie.id)
+
+        assert updated_category.name == "Movie"
+        assert updated_category.description == "Documentary category"
+        assert updated_category.is_active is True
+
+    def test_when_payload_has_only_is_active_then_return_204(
+        self,
+        category_movie: Category,
+        category_repository: DjangoORMCategoryRepository
+    ) -> None:
+        category_repository.save(category_movie)
+
+        url = f"/api/categories/{category_movie.id}/"
+        response = APIClient().patch(
+            url,
+            data={
+                "is_active": False
+            }
+        )
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+        updated_category = category_repository.get_by_id(category_movie.id)
+
+        assert updated_category.name == "Movie"
+        assert updated_category.description == "Movie category"
+        assert updated_category.is_active is False
+
+
+@pytest.mark.django_db
 class TestDeleteAPI:
     def test_when_id_is_invalid_then_return_400(self) -> None:
         url = '/api/categories/123123123/'
