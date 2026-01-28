@@ -32,9 +32,8 @@ class Genre:
 
         return self.id == other.id
 
-    def update_name(self, name):
+    def change_name(self, name):
         self.name = name
-
         self.validate()
 
     def activate(self):
