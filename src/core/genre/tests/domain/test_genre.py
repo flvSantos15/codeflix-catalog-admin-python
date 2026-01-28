@@ -1,146 +1,112 @@
 import uuid
 import pytest
-from src.core.category.domain.category import Category
+from src.core.genre.domain.genre import Genre
 
 
-class TestCategory:
+class TestGenre:
     def test_name_is_required(self):
         with pytest.raises(
             TypeError, match="missing 1 required positional argument: 'name'"
         ):
-            Category()
+            Genre()
 
     def test_name_must_have_less_than_255_characters(self):
         with pytest.raises(ValueError, match="name cannot be longer than 255"):
-            Category(name="a" * 256)
-
-    def test_category_must_be_created_with_id_as_uuid_by_default(self):
-        category = Category(name="horror")
-        assert isinstance(category.id, uuid.UUID)
-
-    def test_created_category_with_default_values(self):
-        category = Category("action")
-        assert category.name == "action"
-        assert category.description == ""
-        assert category.is_active is True
-
-    def test_category_is_created_as_active_by_default(self):
-        category = Category("name")
-        assert category.is_active is True
-
-    def test_category_is_created_as_inactive(self):
-        category = Category("name", is_active=False)
-        assert category.is_active is False
-
-    def test_category_is_created_with_provided_values(self):
-        cat_id = uuid.uuid4()
-        category = Category(
-            id=cat_id, name="documentary", description="description", is_active=False
-        )
-        assert category.id == cat_id
-        assert category.name == "documentary"
-        assert category.description == "description"
-        assert category.is_active is False
+            Genre(name="a" * 256)
 
     def test_cannot_create_category_with_empty_name(self):
         with pytest.raises(ValueError, match="name cannot be empty"):
-            Category(name="")
+            Genre(name="")
 
-    def test_category_str_method(self):
-        category_id = uuid.uuid4()
-        category = Category(
-            id=category_id, name="documentary", description="description", is_active=False
+    def test_created_genre_with_default_values(self):
+        genre = Genre("Romance")
+        assert genre.name == "Romance"
+        assert genre.is_active is True
+        assert isinstance(genre.id, uuid.UUID)
+        assert genre.categories == set()
+
+    def test_genre_is_created_with_provided_values(self):
+        genre_id = uuid.uuid4()
+        categories = {uuid.uuid4(), uuid.uuid4()}
+        genre = Genre(
+            id=genre_id,
+            name="Romance",
+            is_active=False,
+            categories=categories
         )
-        assert str(category) == "documentary - description (False)"
+        assert genre.id == genre_id
+        assert genre.name == "Romance"
+        assert genre.is_active is False
+        assert genre.categories == categories
 
-    def test_category_repr_method(self):
-        category_id = uuid.uuid4()
-        category = Category(
-            id=category_id, name="documentary", description="description", is_active=False
+
+class TestActivateGenre:
+    def test_activate_inactive_genre(self):
+        genre = Genre(
+            name="Romance",
+            is_active=False
         )
-        assert repr(category) == f"<Category documentary ({category_id})>"
+
+        genre.activate()
+
+        assert genre.is_active is True
+
+    def test_activate_active_genre(self):
+        genre = Genre(
+            name="Romance",
+            is_active=True
+        )
+
+        genre.activate()
+
+        assert genre.is_active is True
 
 
-class TestUpdateCategory:
-    def test_update_category_with_name_and_description(self):
-        category = Category(name="Filme", description="Descrição")
+class TestDeactivateGenre:
+    def test_deactivate_active_genre(self):
+        genre = Genre(
+            name="Romance",
+            is_active=True
+        )
 
-        category.update_category(
-            name="Série", description="Descrição atualizada")
+        genre.deactivate()
 
-        assert category.name == "Série"
-        assert category.description == "Descrição atualizada"
+        assert genre.is_active is False
 
-    def test_update_category_with_invalid_name_raises_expection(self):
-        category = Category(name="Filme", description="Descrição")
+    def test_activate_inactive_genre(self):
+        genre = Genre(
+            name="Romance",
+            is_active=False
+        )
 
-        with pytest.raises(ValueError, match="name cannot be longer than 255"):
-            category.update_category(
-                name="a" * 256, description="Descrição atualizada")
+        genre.deactivate()
 
-    def test_cannot_update_category_with_empty_name(self):
-        category = Category(name="Filme", description="Descrição")
-
-        with pytest.raises(ValueError, match="name cannot be empty"):
-            category.update_category(
-                name="", description="Descrição atualizada")
-
-
-class TestActivateCategory:
-    def test_activate_inactive_category(self):
-        category = Category(
-            name="Filme", description="Descrição", is_active=False)
-
-        category.activate()
-
-        assert category.is_active is True
-
-    def test_activate_active_category(self):
-        category = Category(
-            name="Filme", description="Descrição", is_active=True)
-
-        category.activate()
-
-        assert category.is_active is True
-
-
-class TestDeactivateCategory:
-    def test_deactivate_active_category(self):
-        category = Category(
-            name="Filme", description="Descrição", is_active=True)
-
-        category.deactivate()
-
-        assert category.is_active is False
-
-    def test_activate_inactive_category(self):
-        category = Category(
-            name="Filme", description="Descrição", is_active=False)
-
-        category.deactivate()
-
-        assert category.is_active is False
+        assert genre.is_active is False
 
 
 class TestEquality:
-    def test_when_categories_have_same_id_they_are_equal(self):
+    def test_when_genres_have_same_id_they_are_equal(self):
         common_id = uuid.uuid4()
-        category_1 = Category(
-            id=common_id, name="Filme", description="Descrição", is_active=True
+        genre_1 = Genre(
+            id=common_id,
+            name="Horror",
+            is_active=True
         )
-        category_2 = Category(
-            id=common_id, name="Filme", description="Descrição", is_active=True
+        genre_2 = Genre(
+            id=common_id,
+            name="Horror",
+            is_active=True
         )
 
-        assert category_1 == category_2
+        assert genre_1 == genre_2
 
-    def test_when_categories_have_different_id_they_are_not_equal(self):
+    def test_when_genres_have_different_id_they_are_not_equal(self):
         class Dymmy:
             pass
 
         common_id = uuid.uuid4()
-        category = Category(id=uuid.uuid4(), name="Filme")
+        genre = Genre(id=uuid.uuid4(), name="Drama")
         dummy = Dymmy()
         dummy.id = common_id
 
-        assert category != dummy
+        assert genre != dummy
