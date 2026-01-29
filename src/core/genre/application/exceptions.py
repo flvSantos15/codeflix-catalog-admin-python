@@ -1,0 +1,2 @@
+class RelatedCategoriesNotFound(Exception):
+    pass
