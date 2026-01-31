@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
 from uuid import UUID
 
-from core.genre.application.exceptions import RelatedCategoriesNotFound
+from core.genre.application.exceptions import InvalidGenre, RelatedCategoriesNotFound
+from core.genre.domain.genre import Genre
 
 
 class CreateGenre:
@@ -26,3 +27,12 @@ class CreateGenre:
             raise RelatedCategoriesNotFound(
                 f"Categories not found: {input.category_ids - category_ids}"
             )
+
+        try:
+            genre = Genre(
+                name=input.name,
+                is_active=input.is_active,
+                categories=input.category_ids
+            )
+        except ValueError as err:
+            raise InvalidGenre(str(err))
