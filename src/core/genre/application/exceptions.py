@@ -4,3 +4,7 @@ class RelatedCategoriesNotFound(Exception):
 
 class InvalidGenre(Exception):
     pass
+
+
+class GenreNotFound(Exception):
+    pass

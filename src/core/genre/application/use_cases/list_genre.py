@@ -12,7 +12,7 @@ class GenreOutput:
 
 
 class ListGenre:
-    def _init__(self, repository: GenreRepository):
+    def __init__(self, repository: GenreRepository):
         self.repository = repository
 
     @dataclass
