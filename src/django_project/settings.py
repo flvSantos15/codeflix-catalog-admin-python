@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_extensions',
     'src.django_project.category_app',
     'src.django_project.genre_app',
 ]

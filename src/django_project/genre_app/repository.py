@@ -17,13 +17,42 @@ class DjangoORMGenreRepository(GenreRepository):
             genre_model.categories.set(genre.categories)
 
     def get_by_id(self, id: UUID) -> Genre | None:
-        raise NotImplementedError
+        try:
+            genre_model = GenreORM.objects.get(id=id)
+        except GenreORM.DoesNotExist:
+            return None
+
+        return Genre(
+            id=genre_model.id,
+            name=genre_model.name,
+            is_active=genre_model.is_active,
+            categories={
+                category.id for category in genre_model.categories.all()}
+        )
 
     def delete(self, id: UUID) -> None:
-        raise NotImplementedError
+        GenreORM.objects.filter(id=id).delete()
 
     def list(self) -> List[Genre]:
-        raise NotImplementedError
+        return [
+            Genre(
+                id=genre_model.id,
+                name=genre_model.name,
+                is_active=genre_model.is_active,
+                categories={
+                    category.id for category in genre_model.categories.all()}
+            ) for genre_model in GenreORM.objects.all()
+        ]
 
     def update(self, genre: Genre) -> None:
-        raise NotImplementedError
+        try:
+            genre_model = GenreORM.objects.get(id=id)
+        except GenreORM.DoesNotExist:
+            return None
+
+        with transaction.atomic():
+            GenreORM.objects.filter(id=genre.id).update(
+                name=genre.name,
+                is_active=genre.is_active
+            )
+            genre_model.categories.set(genre.categories)
