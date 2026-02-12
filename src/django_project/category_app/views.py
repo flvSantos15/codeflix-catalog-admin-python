@@ -2,7 +2,6 @@ from uuid import UUID
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework.exceptions import NotFound
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
 
 from core.category.application.use_cases.create_category import CreateCategory, CreateCategoryRequest
@@ -11,8 +10,8 @@ from src.core.category.application.use_cases.exceptions import CategoryNotFound
 from core.category.application.use_cases.get_category import GetCategory, GetCategoryRequest
 from core.category.application.use_cases.list_category import ListCategory, ListCategoryRequest
 from core.category.application.use_cases.update_category import UpdateCategory, UpdateCategoryRequest
-from django_project.category_app.repository import DjangoORMCategoryRepository
-from django_project.category_app.serializers import CreateCategoryRequestSerializer, CreateCategoryResponseSerializer, DeleteCategoryRequestSerializer, ListCategoryResponseSerializer, RetrieveCategoryRequestSerializer, RetrieveCategoryResponseSerializer, UpdateCategoryRequestSerializer
+from src.django_project.category_app.repository import DjangoORMCategoryRepository
+from src.django_project.category_app.serializers import CreateCategoryRequestSerializer, CreateCategoryResponseSerializer, DeleteCategoryRequestSerializer, ListCategoryResponseSerializer, RetrieveCategoryRequestSerializer, RetrieveCategoryResponseSerializer, UpdateCategoryRequestSerializer
 
 
 class CategoryViewSet(viewsets.ViewSet):
