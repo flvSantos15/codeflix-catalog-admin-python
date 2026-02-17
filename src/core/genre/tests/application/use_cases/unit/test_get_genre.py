@@ -6,7 +6,6 @@ from core.genre.application.exceptions import GenreNotFound
 from core.genre.domain.genre_repository import GenreRepository
 from src.core.genre.application.use_cases.get_genre import GetGenre
 from src.core.genre.domain.genre import Genre
-
 from src.core.category.domain.category import Category
 
 

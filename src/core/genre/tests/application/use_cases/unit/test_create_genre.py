@@ -101,7 +101,7 @@ class TestCreateGenre:
         mock_genre_repository.save.assert_called_once_with(
             Genre(
                 id=output.id,
-                name="Romance",
+                name="Action",
                 is_active=True,
                 categories={movie_category.id, documentary_category.id}
             )
