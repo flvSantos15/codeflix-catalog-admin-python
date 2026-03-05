@@ -6,11 +6,12 @@ from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CON
 
 from core.category.application.use_cases.create_category import CreateCategory, CreateCategoryRequest
 from core.category.application.use_cases.delete_category import DeleteCategory, DeleteCategoryRequest
-from core.genre.application.exceptions import InvalidGenre, RelatedCategoriesNotFound
+from core.genre.application.exceptions import GenreNotFound, InvalidGenre, RelatedCategoriesNotFound
 from core.genre.application.use_cases.create_genre import CreateGenre
+from core.genre.application.use_cases.delete_genre import DeleteGenre
 from core.genre.application.use_cases.list_genre import ListGenre
 from django_project.genre_app.repository import DjangoORMGenreRepository
-from django_project.genre_app.serializers import CreateGenreInputSerializer, CreateGenreOutputSerializer, ListGenreOutputSerializer
+from django_project.genre_app.serializers import CreateGenreInputSerializer, CreateGenreOutputSerializer, DeleteGenreInputSerializer, ListGenreOutputSerializer
 from src.core.category.application.use_cases.exceptions import CategoryNotFound
 from core.category.application.use_cases.get_category import GetCategory, GetCategoryRequest
 from core.category.application.use_cases.list_category import ListCategory, ListCategoryRequest
@@ -91,19 +92,19 @@ class GenreViewSet(viewsets.ViewSet):
 
     #     return Response(status=HTTP_204_NO_CONTENT)
 
-    # def destroy(self, request: Request, pk=None) -> Response:
-    #     serializer = DeleteCategoryRequestSerializer(data={"id": pk})
-    #     serializer.is_valid(raise_exception=True)
+    def destroy(self, request: Request, pk=None) -> Response:
+        serializer = DeleteGenreInputSerializer(data={"id": pk})
+        serializer.is_valid(raise_exception=True)
 
-    #     input = DeleteCategoryRequest(**serializer.validated_data)
-    #     use_case = DeleteCategory(repository=DjangoORMCategoryRepository())
+        input = DeleteGenre.Input(**serializer.validated_data)
+        use_case = DeleteGenre(repository=DjangoORMGenreRepository())
 
-    #     try:
-    #         use_case.execute(request=input)
-    #     except CategoryNotFound:
-    #         return Response(status=HTTP_404_NOT_FOUND)
+        try:
+            use_case.execute(input)
+        except GenreNotFound:
+            return Response(status=HTTP_404_NOT_FOUND)
 
-    #     return Response(status=HTTP_204_NO_CONTENT)
+        return Response(status=HTTP_204_NO_CONTENT)
 
     # def partial_update(self, request, pk: UUID = None) -> Response:
     #     serializer = UpdateCategoryRequestSerializer(data={

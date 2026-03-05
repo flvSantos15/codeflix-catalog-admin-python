@@ -1,3 +1,5 @@
+import uuid
+
 from rest_framework.test import APIClient
 from rest_framework import status
 import pytest
@@ -140,3 +142,23 @@ class TestCreateAPI:
             category_movie.id,
             category_documentary.id
         }
+
+
+@pytest.mark.django_db
+class TestDeleteAPI:
+    def test_when_genre_does_not_exists_then_raise_404(self):
+        url = f"/api/genres/{uuid.uuid4()}/"
+        response = APIClient().delete(url)
+
+        assert response.status_code == 404
+
+    def test_when_pk_is_invalid_then_return_400(self):
+        url = "/api/genres/invalid_pk/"
+        response = APIClient().delete(url)
+
+        assert response.status_code == 400
+
+    def test_delete_genre_from_respository(self):
+        # me certificar que existe no repo
+        # deletar e me cerfiticar que não esta mais no repo
+        pass
