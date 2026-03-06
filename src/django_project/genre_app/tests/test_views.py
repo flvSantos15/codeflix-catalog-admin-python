@@ -27,11 +27,8 @@ def category_documentary():
 
 
 @pytest.fixture
-def category_repository(category_documentary, category_movie) -> DjangoORMCategoryRepository:
-    repo = DjangoORMCategoryRepository()
-    repo.save(category_movie)
-    repo.save(category_documentary)
-    return repo
+def category_repository() -> DjangoORMCategoryRepository:
+    return DjangoORMCategoryRepository()
 
 
 @pytest.fixture
@@ -68,6 +65,9 @@ class TestListAPI:
         category_documentary,
         category_movie
     ):
+        category_repository.save(category_movie)
+        category_repository.save(category_documentary)
+
         genre_repository.save(genre_romance)
         genre_repository.save(genre_drama)
 
@@ -122,6 +122,9 @@ class TestCreateAPI:
         category_repository,
         genre_repository
     ):
+        category_repository.save(category_movie)
+        category_repository.save(category_documentary)
+
         url = "/api/genres/"
         data = {
             "name": "Drama",
@@ -142,6 +145,48 @@ class TestCreateAPI:
             category_movie.id,
             category_documentary.id
         }
+
+
+@pytest.mark.django_db
+class TestUpdateAPI:
+    def test_when_request_data_is_valid_then_update_genre(self):
+        pass
+
+    def test_when_request_data_is_invalid_then_return_400(self):
+        pass
+
+    def test_when_related_categories_do_not_exist_then_return_400(
+        self,
+        category_movie: Category,
+        category_documentary: Category,
+        category_repository: DjangoORMCategoryRepository,
+        genre_drama: Genre,
+        genre_repository: DjangoORMGenreRepository
+    ):
+        category_repository.save(category_movie)
+        category_repository.save(category_documentary)
+        genre_repository.save(genre_drama)
+
+        url = f"/api/genres/{str(genre_drama.id)}/"
+        data = {
+            "name": "Drama",
+            "is_active": True,
+            "categories": [uuid.uuid4()]
+        }
+        response = APIClient().put(url, data)
+
+        assert response.status_code == 400
+
+    def test_when_genre_does_not_exist_then_return_404(self):
+        url = f"/api/genres/{uuid.uuid4()}/"
+        data = {
+            "name": "Drama",
+            "is_active": True,
+            "categories": []
+        }
+        response = APIClient().put(url, data)
+
+        assert response.status_code == 404
 
 
 @pytest.mark.django_db
