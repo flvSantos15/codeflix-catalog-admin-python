@@ -149,8 +149,32 @@ class TestCreateAPI:
 
 @pytest.mark.django_db
 class TestUpdateAPI:
-    def test_when_request_data_is_valid_then_update_genre(self):
-        pass
+    def test_when_request_data_is_valid_then_update_genre(
+        self,
+        category_movie: Category,
+        category_documentary: Category,
+        genre_romance: Genre,
+        category_repository: DjangoORMCategoryRepository,
+        genre_repository: DjangoORMGenreRepository
+    ):
+        category_repository.save(category_movie)
+        category_repository.save(category_documentary)
+
+        genre_repository.save(genre_romance)
+
+        url = f"/api/genres/{str(genre_romance.id)}/"
+        data = {
+            "name": "Action",
+            "is_active": True,
+            "categories": [category_documentary.id]
+        }
+        response = APIClient().put(url, data=data)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        updated_genre = genre_repository.get_by_id(genre_romance.id)
+        assert updated_genre.name == "Action"
+        assert updated_genre.is_active is True
+        assert updated_genre.categories == {category_documentary.id}
 
     def test_when_request_data_is_invalid_then_return_400(self):
         pass

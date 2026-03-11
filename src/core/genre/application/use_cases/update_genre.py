@@ -7,59 +7,43 @@ from core.category.domain.category_repository import CategoryRepository
 
 
 class UpdateGenre:
-    def __init__(self, repository, category_repository):
+    def __init__(self, repository: GenreRepository, category_repository: CategoryRepository):
         self.repository = repository
         self.category_repository = category_repository
 
     @dataclass
     class Input:
         id: UUID
-        name: str | None = None
-        is_active: bool | None = None
-        categories: set[UUID] | None = None
+        name: str
+        is_active: bool
+        categories: set[UUID]
 
     @dataclass
     class Output:
         id: UUID
 
-    def execute(self, request: Input) -> None:
-        genre = self.repository.get_by_id(id=request.id)
+    def execute(self, input: Input) -> None:
+        genre = self.repository.get_by_id(id=input.id)
 
         if genre is None:
-            raise GenreNotFound(f"Genre with {request.id} not found")
+            raise GenreNotFound(f"Genre with {input.id} not found")
 
-        current_name = genre.name
-        current_categories = genre.categories
-
-        if request.name is not None:
-            current_name = request.name
+        category_ids = {
+            category.id for category in self.category_repository.list()
+        }
+        if not input.categories.issubset(category_ids):
+            raise RelatedCategoriesNotFound(
+                f"Categories not found: {category_ids}"
+            )
 
         try:
-            if request.categories is not None:
-                category_ids = {
-                    category.id for category in self.category_repository.list()
-                }
-                if not request.categories.issubset(category_ids):
-                    raise RelatedCategoriesNotFound(
-                        f"Categories not found: {category_ids}"
-                    )
-
-                for category_id in current_categories:
-                    genre.remove_category(category_id=category_id)
-                for category_id in request.categories:
-                    genre.add_category(category_id=category_id)
-
-            if request.is_active is True:
+            if input.is_active is True:
                 genre.activate()
-
-            if request.is_active is False:
+            if input.is_active is False:
                 genre.deactivate()
-
-            genre.change_name(
-                name=current_name,
-            )
+            genre.change_name(name=input.name)
+            genre.update_categories(input.categories)
         except ValueError as err:
             raise InvalidGenre(str(err))
 
         self.repository.update(genre)
-        return self.Output(id=genre.id)
