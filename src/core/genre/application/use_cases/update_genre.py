@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from uuid import UUID
+
 from core.genre.application.exceptions import GenreNotFound, InvalidGenre, RelatedCategoriesNotFound
 from core.genre.domain.genre_repository import GenreRepository
-from src.core.category.application.use_cases.exceptions import CategoryNotFound
 from core.category.domain.category_repository import CategoryRepository
 
 
@@ -33,7 +33,7 @@ class UpdateGenre:
         }
         if not input.categories.issubset(category_ids):
             raise RelatedCategoriesNotFound(
-                f"Categories not found: {category_ids}"
+                f"Categories with provided IDs not found: {input.categories - category_ids}"
             )
 
         try:

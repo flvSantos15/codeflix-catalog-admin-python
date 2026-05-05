@@ -26,8 +26,7 @@ class DjangoORMGenreRepository(GenreRepository):
             id=genre_model.id,
             name=genre_model.name,
             is_active=genre_model.is_active,
-            categories={
-                category.id for category in genre_model.categories.all()}
+            categories=set(genre_model.categories.values_list("id", flat=True)),
         )
 
     def delete(self, id: UUID) -> None:
@@ -46,12 +45,12 @@ class DjangoORMGenreRepository(GenreRepository):
 
     def update(self, genre: Genre) -> None:
         try:
-            genre_model = GenreORM.objects.get(id=id)
+            genre_model = GenreORM.objects.get(pk=genre.id)
         except GenreORM.DoesNotExist:
             return None
 
         with transaction.atomic():
-            GenreORM.objects.filter(id=genre.id).update(
+            GenreORM.objects.filter(pk=genre.id).update(
                 name=genre.name,
                 is_active=genre.is_active
             )

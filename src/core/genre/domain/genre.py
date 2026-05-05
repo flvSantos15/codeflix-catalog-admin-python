@@ -8,7 +8,7 @@ from uuid import UUID
 class Genre:
     name: str
     is_active: bool = True
-    categories: set[UUID] = field(default_factory=set)
+    categories: Set[UUID] = field(default_factory=set)
     id: UUID = field(default_factory=uuid.uuid4)
 
     def __post_init__(self):
